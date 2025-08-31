@@ -1,0 +1,76 @@
+POST http://localhost:8080/api/users/register
+content-type: application/json
+Content-Length: 152
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+"username" :"testuser",
+"email":"test@123"
+,"password":"Test@123"
+,"name":"Test User"
+,"phone":"1234567890"
+,"address":"123 Test St, Test City, TX"
+
+}
+
+<> 2025-08-23T221628.201.json
+
+###
+
+POST http://localhost:8080/api/users/register
+Content-Length: 152
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+"username" :"testuser",
+"email":"test@123"
+,"password":"Test@123"
+,"name":"Test User"
+,"phone":"1234567890"
+,"address":"123 Test St, Test City, TX"
+
+}
+
+###
+
+POST http://localhost:8080/api/users/register
+Content-Length: 153
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+"username" :"testuser",
+"email":"test@123"
+,"password":"Test@123"
+,"name":"Test User"
+,"phone":"1234567890"
+,"address":"123 Test St, Test City, TX"
+
+}
+
+###
+
+POST http://localhost:8080/api/ngo/register
+Content-Type: application/json
+Content-Length: 185
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2025.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "organization_name": "abc",
+  "email": "abc@123",
+  "password": "1234",
+  "address": "xyz",
+  "contactPerson_name": "demo",
+  "contactPerson_Phone": "852014633",
+  "createdAt": {}
+}
+
+###
+
