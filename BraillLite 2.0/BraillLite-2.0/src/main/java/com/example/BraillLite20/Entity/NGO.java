@@ -46,7 +46,7 @@ public class NGO implements UserDetails {
 
     @Override
     public String getUsername() {
-        return organization_name;
+        return this.email;
     }
 
     @Override

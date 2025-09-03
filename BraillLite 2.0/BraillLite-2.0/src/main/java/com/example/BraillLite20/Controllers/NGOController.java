@@ -1,6 +1,7 @@
 package com.example.BraillLite20.Controllers;
 
 import com.example.BraillLite20.DTOs.RequestDTO.NGODto;
+import com.example.BraillLite20.DTOs.RequestDTO.ProfileDTO;
 import com.example.BraillLite20.DTOs.ResponseDTO.ResponseDTO;
 import com.example.BraillLite20.Repositories.NGORepo;
 import com.example.BraillLite20.Service.JWTServices;
@@ -11,13 +12,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = "http://localhost:8000",allowCredentials = "true")
 public class NGOController {
 
 
@@ -46,7 +45,7 @@ public class NGOController {
         if("Login Successful".equalsIgnoreCase(responseDTO.getMessage())){
             var userDetails = userDetailService.loadUserByUsername(ngoDto.getEmail());
             String jwt = jWTServices.generateToken(userDetails);
-            Cookie cookie = new Cookie("JWT", jwt);
+            Cookie cookie = new Cookie("jwt", jwt);
             cookie.setHttpOnly(true);
             cookie.setPath("/");
             cookie.setMaxAge(60*60*24);
@@ -56,4 +55,12 @@ public class NGOController {
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
 
     }
+
+    @GetMapping("/ngo/myProfile")
+    public ProfileDTO getProfile(@RequestHeader(value = "Authorization",required = false) String authHeader,
+                                 @CookieValue(value = "jwt",required = false) String jwtCookie){
+        return ngoServices.getProfile(authHeader,jwtCookie);
+    }
+
+
  }

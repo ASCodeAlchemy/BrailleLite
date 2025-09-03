@@ -1,11 +1,15 @@
 package com.example.BraillLite20.Service;
 
 import com.example.BraillLite20.DTOs.RequestDTO.NGODto;
+import com.example.BraillLite20.DTOs.RequestDTO.ProfileDTO;
 import com.example.BraillLite20.DTOs.ResponseDTO.ResponseDTO;
 import com.example.BraillLite20.Entity.Admin;
 import com.example.BraillLite20.Entity.NGO;
 import com.example.BraillLite20.Repositories.NGORepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -14,8 +18,17 @@ import java.util.Optional;
 @Service
 public class NGOServices {
 
+
+    private final NGORepo ngoRepo;
+    private final JWTServices jwtServices;
+    private final PasswordEncoder encoder;
+
     @Autowired
-    private NGORepo ngoRepo;
+    public NGOServices(NGORepo ngoRepo, JWTServices jwtServices,PasswordEncoder encoder) {
+        this.ngoRepo = ngoRepo;
+        this.jwtServices = jwtServices;
+        this.encoder=encoder;
+    }
 
     public ResponseDTO registerNgo(NGODto ngoDto){
         Optional<NGO> NGOEmail = ngoRepo.findByEmail(ngoDto.getEmail());
@@ -34,12 +47,12 @@ public class NGOServices {
     public NGO NgoDtoTONgoMapper(NGODto ngoDto){
         NGO ngo = new NGO();
 
-        ngo.setPassword(ngoDto.getPassword());
+        ngo.setPassword(encoder.encode(ngoDto.getPassword()));
         ngo.setEmail(ngoDto.getEmail());
         ngo.setAddress(ngoDto.getAddress());
         ngo.setOrganization_name(ngoDto.getOrganization_name());
         ngo.setContactPerson_name(ngoDto.getContactPerson_name());
-        ngo.setContactPerson_Phone(ngo.getContactPerson_Phone());
+        ngo.setContactPerson_Phone(ngoDto.getContactPerson_Phone());
         ngo.setCreatedAt(new Timestamp(System.currentTimeMillis()));
 
         return ngo;
@@ -57,5 +70,37 @@ public class NGOServices {
             return new ResponseDTO("Invalid Password");
         }
         return new ResponseDTO("Login Successful");
+    }
+
+    public ProfileDTO getProfile(String authHeader, String jwtCookie) {
+        String token = null;
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            token = authHeader.substring(7);
+        } else if (jwtCookie != null) {
+            token =  jwtCookie;
+        }
+        if(token==null){
+            throw new IllegalArgumentException("Token Missing");
+        }
+        String email = jwtServices.extractUsername(token);
+        if(email==null) {
+            throw new IllegalArgumentException("Invalid Token");
+        }
+
+        Optional<NGO> ngos = ngoRepo.findByEmail(email);
+        if(ngos.isEmpty()){
+            throw new IllegalArgumentException("NGO Not found");
+        }
+        NGO ngo = ngos.get();
+        ProfileDTO profileDTO = new ProfileDTO();
+
+        profileDTO.setOrganization_name(ngo.getOrganization_name());
+        profileDTO.setAddress(ngo.getAddress());
+        profileDTO.setEmail(ngo.getEmail());
+        profileDTO.setContactPerson_name(ngo.getContactPerson_name());
+        profileDTO.setContactPerson_Phone(ngo.getContactPerson_Phone());
+
+        return profileDTO;
+
     }
 }

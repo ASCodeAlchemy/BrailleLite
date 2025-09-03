@@ -1,10 +1,16 @@
 package com.example.BraillLite20.Service;
 
+import com.example.BraillLite20.DTOs.RequestDTO.ProfileDTO;
 import com.example.BraillLite20.DTOs.RequestDTO.UserDTO;
 import com.example.BraillLite20.DTOs.ResponseDTO.ResponseDTO;
+import com.example.BraillLite20.Entity.NGO;
 import com.example.BraillLite20.Entity.Users;
+import com.example.BraillLite20.Repositories.NGORepo;
 import com.example.BraillLite20.Repositories.UserRepo;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,22 +21,28 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepo userRepo;
+    private final NGORepo ngoRepo;
     private final PasswordEncoder encoder;
+    private final JWTServices jwtServices;
+
 
     @Autowired
-    public UserService(UserRepo userRepo,PasswordEncoder encoder) {
+    public UserService(UserRepo userRepo,NGORepo ngoRepo, PasswordEncoder encoder,JWTServices jwtServices) {
         this.userRepo = userRepo;
-        this.encoder=encoder;
+        this.encoder = encoder;
+        this.jwtServices=jwtServices;
+        this.ngoRepo =ngoRepo;
+
     }
 
-        public ResponseDTO signUp(UserDTO userDTO){
+    public ResponseDTO signUp(UserDTO userDTO) {
         Optional<Users> userEmail = userRepo.findByEmail(userDTO.getEmail());
-        if(userEmail.isPresent()){
+        if (userEmail.isPresent()) {
             throw new IllegalStateException("Email is Already Registered");
 
         }
 
-        Users user =userDTOToUserMapper(userDTO);
+        Users user = userDTOToUserMapper(userDTO);
         userRepo.save(user);
         ResponseDTO dto = new ResponseDTO();
         dto.setMessage("User Registered Successfully");
@@ -55,11 +67,11 @@ public class UserService {
 
     public ResponseDTO signIn(UserDTO userDTO) {
         Optional<Users> userEmail = userRepo.findByEmail(userDTO.getEmail());
-        if(userEmail.isEmpty()){
+        if (userEmail.isEmpty()) {
             return new ResponseDTO("Invalid Email");
         }
         Users user = userEmail.get();
-        if(!encoder.matches(userDTO.getPassword(),user.getPassword())){
+        if (!encoder.matches(userDTO.getPassword(), user.getPassword())) {
             return new ResponseDTO("Invalid Password");
         }
         return new ResponseDTO("Login Successful");
@@ -67,3 +79,6 @@ public class UserService {
 
 
 }
+
+
+
