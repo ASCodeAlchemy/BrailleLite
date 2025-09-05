@@ -41,8 +41,8 @@ public class SecurityConfig {
                 .csrf(customizer->customizer.disable())
                 .authorizeHttpRequests(request->request.requestMatchers("/api/users/register"
                         ,"/api/ngo/register"
-                        ,"api/users/login","/api/convert","api/ngo/login","/api/donor/save","/api/payment/create-checkout-session/*",
-                        "/api/payment/success","/api/payment/cancel").permitAll().anyRequest().authenticated())
+                        ,"/api/users/login","/api/convert","/api/ngo/login","/api/donor/save","/api/payment/create-checkout-session/*",
+                        "/api/payment/success","/api/payment/cancel","/api/feedback").permitAll().anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .authenticationProvider(authProvider())
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

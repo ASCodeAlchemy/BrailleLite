@@ -4,7 +4,6 @@ import com.example.BraillLite20.DTOs.RequestDTO.NGODto;
 import com.example.BraillLite20.DTOs.RequestDTO.ProfileDTO;
 import com.example.BraillLite20.DTOs.ResponseDTO.ResponseDTO;
 import com.example.BraillLite20.Entity.Donor;
-import com.example.BraillLite20.Repositories.NGORepo;
 import com.example.BraillLite20.Service.JWTServices;
 import com.example.BraillLite20.Service.MyUserDetailService;
 import com.example.BraillLite20.Service.NGOServices;

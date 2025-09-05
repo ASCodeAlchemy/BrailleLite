@@ -2,7 +2,6 @@ package com.example.BraillLite20.Controllers;
 
 import com.example.BraillLite20.DTOs.RequestDTO.UserDTO;
 import com.example.BraillLite20.DTOs.ResponseDTO.ResponseDTO;
-import com.example.BraillLite20.Repositories.UserRepo;
 import com.example.BraillLite20.Service.JWTServices;
 import com.example.BraillLite20.Service.MyUserDetailService;
 import com.example.BraillLite20.Service.UserService;
@@ -23,11 +22,13 @@ private final UserService userService;
     private final JWTServices jwtServices;
 
 
+
     @Autowired
     public UserController( UserService userService,MyUserDetailService myUserDetailService,JWTServices jwtServices) {
         this.userService = userService;
         this.myUserDetailService = myUserDetailService;
         this.jwtServices = jwtServices;
+
     }
 
     @PostMapping("/users/register")
@@ -71,4 +72,8 @@ private final UserService userService;
 
 
 
-}
+
+    }
+
+
+
