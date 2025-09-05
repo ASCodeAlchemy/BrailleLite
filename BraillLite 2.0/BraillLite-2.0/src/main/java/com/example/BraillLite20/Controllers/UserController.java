@@ -11,7 +11,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,14 +19,12 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
 private final UserService userService;
-    private final UserRepo userRepo;
     private final MyUserDetailService myUserDetailService;
     private final JWTServices jwtServices;
 
 
     @Autowired
-    public UserController(UserRepo userRepo, UserService userService,MyUserDetailService myUserDetailService,JWTServices jwtServices) {
-        this.userRepo = userRepo;
+    public UserController( UserService userService,MyUserDetailService myUserDetailService,JWTServices jwtServices) {
         this.userService = userService;
         this.myUserDetailService = myUserDetailService;
         this.jwtServices = jwtServices;

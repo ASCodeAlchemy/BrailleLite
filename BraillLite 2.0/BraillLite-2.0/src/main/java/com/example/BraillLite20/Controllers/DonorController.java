@@ -2,12 +2,10 @@ package com.example.BraillLite20.Controllers;
 
 
 import com.example.BraillLite20.DTOs.RequestDTO.DonorDTO;
-import com.example.BraillLite20.DTOs.ResponseDTO.ResponseDTO;
 import com.example.BraillLite20.Entity.Donor;
 import com.example.BraillLite20.Service.DonorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

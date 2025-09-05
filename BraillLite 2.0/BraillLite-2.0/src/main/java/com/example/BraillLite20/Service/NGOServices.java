@@ -3,8 +3,9 @@ package com.example.BraillLite20.Service;
 import com.example.BraillLite20.DTOs.RequestDTO.NGODto;
 import com.example.BraillLite20.DTOs.RequestDTO.ProfileDTO;
 import com.example.BraillLite20.DTOs.ResponseDTO.ResponseDTO;
-import com.example.BraillLite20.Entity.Admin;
+import com.example.BraillLite20.Entity.Donor;
 import com.example.BraillLite20.Entity.NGO;
+import com.example.BraillLite20.Repositories.DonorRepo;
 import com.example.BraillLite20.Repositories.NGORepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,7 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,14 +23,14 @@ public class NGOServices {
 
 
     private final NGORepo ngoRepo;
-    private final JWTServices jwtServices;
     private final PasswordEncoder encoder;
+    private final DonorRepo donorRepo;
 
     @Autowired
-    public NGOServices(NGORepo ngoRepo, JWTServices jwtServices,PasswordEncoder encoder) {
+    public NGOServices(NGORepo ngoRepo,PasswordEncoder encoder,DonorRepo donorRepo) {
         this.ngoRepo = ngoRepo;
-        this.jwtServices = jwtServices;
         this.encoder=encoder;
+        this.donorRepo=donorRepo;
     }
 
     public ResponseDTO registerNgo(NGODto ngoDto){
@@ -72,35 +75,53 @@ public class NGOServices {
         return new ResponseDTO("Login Successful");
     }
 
-    public ProfileDTO getProfile(String authHeader, String jwtCookie) {
-        String token = null;
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            token = authHeader.substring(7);
-        } else if (jwtCookie != null) {
-            token =  jwtCookie;
+
+    public ProfileDTO getProfile(String email){
+        Optional<NGO> findEmail = ngoRepo.findByEmail(email);
+        if(findEmail.isEmpty()){
+            throw  new IllegalArgumentException("Email not Found");
         }
-        if(token==null){
-            throw new IllegalArgumentException("Token Missing");
-        }
-        String email = jwtServices.extractUsername(token);
-        if(email==null) {
-            throw new IllegalArgumentException("Invalid Token");
+        ProfileDTO proDto = new ProfileDTO();
+        NGO ngos = findEmail.get();
+        proDto.setOrganization_name(ngos.getOrganization_name());
+        proDto.setAddress(ngos.getAddress());
+        proDto.setEmail(ngos.getEmail());
+        proDto.setContactPerson_name(ngos.getContactPerson_name());
+        proDto.setContactPerson_Phone(ngos.getContactPerson_Phone());
+
+        return proDto;
+    }
+
+    public List<Donor> getallDonors(){
+        return donorRepo.findAll();
+    }
+
+
+
+    public ResponseEntity<?> updateProfile(ProfileDTO profileDTO, String email){
+        Optional<NGO> findEmail = ngoRepo.findByEmail(email);
+
+        if(findEmail.isEmpty()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("EMAIL NOT FOUND");
         }
 
-        Optional<NGO> ngos = ngoRepo.findByEmail(email);
-        if(ngos.isEmpty()){
-            throw new IllegalArgumentException("NGO Not found");
+        NGO ngos = findEmail.get();
+
+        if(profileDTO.getOrganization_name()!=null){
+            ngos.setOrganization_name(profileDTO.getOrganization_name());
         }
-        NGO ngo = ngos.get();
-        ProfileDTO profileDTO = new ProfileDTO();
+        if(profileDTO.getAddress() != null){
+            ngos.setAddress(profileDTO.getAddress());
+        }
+        if(profileDTO.getContactPerson_name() != null){
+            ngos.setContactPerson_name(profileDTO.getContactPerson_name());
+        }
+        if(profileDTO.getContactPerson_Phone() != null){
+            ngos.setContactPerson_Phone(profileDTO.getContactPerson_Phone());
+        }
 
-        profileDTO.setOrganization_name(ngo.getOrganization_name());
-        profileDTO.setAddress(ngo.getAddress());
-        profileDTO.setEmail(ngo.getEmail());
-        profileDTO.setContactPerson_name(ngo.getContactPerson_name());
-        profileDTO.setContactPerson_Phone(ngo.getContactPerson_Phone());
+        ngoRepo.save(ngos);
 
-        return profileDTO;
-
+        return ResponseEntity.ok("Profile Updated Successfully");
     }
 }

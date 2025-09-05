@@ -3,6 +3,7 @@ package com.example.BraillLite20.Controllers;
 import com.example.BraillLite20.DTOs.RequestDTO.NGODto;
 import com.example.BraillLite20.DTOs.RequestDTO.ProfileDTO;
 import com.example.BraillLite20.DTOs.ResponseDTO.ResponseDTO;
+import com.example.BraillLite20.Entity.Donor;
 import com.example.BraillLite20.Repositories.NGORepo;
 import com.example.BraillLite20.Service.JWTServices;
 import com.example.BraillLite20.Service.MyUserDetailService;
@@ -12,7 +13,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -20,15 +26,13 @@ import org.springframework.web.bind.annotation.*;
 public class NGOController {
 
 
-    private NGOServices ngoServices;
-    private NGORepo  ngoRepo;
-    private MyUserDetailService userDetailService;
-    private JWTServices jWTServices;
+    private final NGOServices ngoServices;
+    private final MyUserDetailService userDetailService;
+    private final JWTServices jWTServices;
 
     @Autowired
-    public NGOController(NGOServices ngoServices, NGORepo ngoRepo, MyUserDetailService userDetailService, JWTServices jWTServices) {
+    public NGOController(NGOServices ngoServices, MyUserDetailService userDetailService, JWTServices jWTServices) {
         this.ngoServices = ngoServices;
-        this.ngoRepo = ngoRepo;
         this.userDetailService = userDetailService;
         this.jWTServices = jWTServices;
     }
@@ -56,11 +60,38 @@ public class NGOController {
 
     }
 
+
+    @PreAuthorize("hasRole('NGO')")
     @GetMapping("/ngo/myProfile")
-    public ProfileDTO getProfile(@RequestHeader(value = "Authorization",required = false) String authHeader,
-                                 @CookieValue(value = "jwt",required = false) String jwtCookie){
-        return ngoServices.getProfile(authHeader,jwtCookie);
+    public  ProfileDTO getProfile(@AuthenticationPrincipal UserDetails userDetails){
+        if(userDetails==null || userDetails.getUsername()==null){
+            throw new IllegalArgumentException("Unauthorized");
+        }
+
+        return ngoServices.getProfile(userDetails.getUsername());
+
     }
+
+
+        @PreAuthorize("hasRole('NGO')")
+        @GetMapping("/ngo/donorDetails")
+        public List<Donor> getDonor(){
+            return ngoServices.getallDonors();
+        }
+
+
+    @PreAuthorize("hasRole('NGO')")
+    @PostMapping("/ngo/updateProfile")
+    public ResponseEntity<?> updateProfile(@RequestBody ProfileDTO profileDTO, @AuthenticationPrincipal UserDetails userDetails){
+        if(userDetails==null || userDetails.getUsername()==null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+        }
+
+        return ngoServices.updateProfile(profileDTO,userDetails.getUsername());
+
+    }
+
+
 
 
  }
