@@ -1,11 +1,15 @@
 package com.example.BraillLite20.Service;
 
+import com.example.BraillLite20.DTOs.RequestDTO.ChangePassDTO;
+import com.example.BraillLite20.DTOs.RequestDTO.EndUserDTO;
 import com.example.BraillLite20.DTOs.RequestDTO.NGODto;
 import com.example.BraillLite20.DTOs.RequestDTO.ProfileDTO;
 import com.example.BraillLite20.DTOs.ResponseDTO.ResponseDTO;
 import com.example.BraillLite20.Entity.Donor;
+import com.example.BraillLite20.Entity.EndUser;
 import com.example.BraillLite20.Entity.NGO;
 import com.example.BraillLite20.Repositories.DonorRepo;
+import com.example.BraillLite20.Repositories.EndUserRepo;
 import com.example.BraillLite20.Repositories.NGORepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,12 +30,15 @@ public class NGOServices {
     private final NGORepo ngoRepo;
     private final PasswordEncoder encoder;
     private final DonorRepo donorRepo;
+    private final EndUserRepo endUserRepo;
+
 
     @Autowired
-    public NGOServices(NGORepo ngoRepo,PasswordEncoder encoder,DonorRepo donorRepo) {
+    public NGOServices(NGORepo ngoRepo,PasswordEncoder encoder,DonorRepo donorRepo,EndUserRepo endUserRepo) {
         this.ngoRepo = ngoRepo;
         this.encoder=encoder;
         this.donorRepo=donorRepo;
+        this.endUserRepo=endUserRepo;
     }
 
     public ResponseDTO registerNgo(NGODto ngoDto){
@@ -124,4 +132,45 @@ public class NGOServices {
 
         return ResponseEntity.ok("Profile Updated Successfully");
     }
+
+    public ResponseEntity<?> changePass(ChangePassDTO passDTO,String email){
+        Optional<NGO> passEmail = ngoRepo.findByEmail(email);
+        if(passEmail.isEmpty()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("NGO Not Found");
+
+        }
+        NGO ngos = passEmail.get();
+        if(!encoder.matches(passDTO.getOldPass(),passDTO.getNewPass())){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Old password is incorrect");
+        }
+        ngos.setAddress(encoder.encode(passDTO.getNewPass()));
+        ngoRepo.save(ngos);
+        return ResponseEntity.ok("Password Changed Successfully");
+
+    }
+
+    public EndUser enrollUsers(EndUserDTO dto){
+        Optional<EndUser> email = endUserRepo.findByEmail(dto.getEmail());
+       if(email.isPresent()){
+           throw new IllegalArgumentException("Email Already Exists");
+       }
+      EndUser user = new EndUser();
+        user.setName(dto.getName());
+        user.setEmail(dto.getEmail());
+        user.setDob(dto.getDob());
+        user.setGender(dto.getGender());
+        user.setDisability_no(dto.getDisability_no());
+        user.setEmergencyContact(dto.getEmergencyContact());
+
+        user.setRegisterDate(LocalDateTime.now());
+
+        return endUserRepo.save(user);
+
+
+    }
+
+    public List<EndUser> getAllUsers(){
+        return endUserRepo.findAll();
+    }
+
 }

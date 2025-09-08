@@ -1,9 +1,12 @@
 package com.example.BraillLite20.Controllers;
 
+import com.example.BraillLite20.DTOs.RequestDTO.ChangePassDTO;
+import com.example.BraillLite20.DTOs.RequestDTO.EndUserDTO;
 import com.example.BraillLite20.DTOs.RequestDTO.NGODto;
 import com.example.BraillLite20.DTOs.RequestDTO.ProfileDTO;
 import com.example.BraillLite20.DTOs.ResponseDTO.ResponseDTO;
 import com.example.BraillLite20.Entity.Donor;
+import com.example.BraillLite20.Entity.EndUser;
 import com.example.BraillLite20.Service.JWTServices;
 import com.example.BraillLite20.Service.MyUserDetailService;
 import com.example.BraillLite20.Service.NGOServices;
@@ -20,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/ngo")
 @CrossOrigin(origins = "http://localhost:8000",allowCredentials = "true")
 public class NGOController {
 
@@ -36,13 +39,13 @@ public class NGOController {
         this.jWTServices = jWTServices;
     }
 
-    @PostMapping("/ngo/register")
+    @PostMapping("/register")
     public ResponseEntity<ResponseDTO> NGOSignUp(@RequestBody NGODto ngoDto){
         return new ResponseEntity<>(ngoServices.registerNgo(ngoDto), HttpStatus.CREATED);
     }
 
 
-    @PostMapping("/ngo/login")
+    @PostMapping("/login")
     public ResponseEntity<ResponseDTO> NGOlogin(@RequestBody NGODto ngoDto, HttpServletResponse response){
         ResponseDTO responseDTO = ngoServices.ngoLogin(ngoDto);
         if("Login Successful".equalsIgnoreCase(responseDTO.getMessage())){
@@ -61,7 +64,7 @@ public class NGOController {
 
 
     @PreAuthorize("hasRole('NGO')")
-    @GetMapping("/ngo/myProfile")
+    @GetMapping("/myProfile")
     public  ProfileDTO getProfile(@AuthenticationPrincipal UserDetails userDetails){
         if(userDetails==null || userDetails.getUsername()==null){
             throw new IllegalArgumentException("Unauthorized");
@@ -73,14 +76,14 @@ public class NGOController {
 
 
         @PreAuthorize("hasRole('NGO')")
-        @GetMapping("/ngo/donorDetails")
+        @GetMapping("/donorDetails")
         public List<Donor> getDonor(){
             return ngoServices.getallDonors();
         }
 
 
     @PreAuthorize("hasRole('NGO')")
-    @PostMapping("/ngo/updateProfile")
+    @PostMapping("/updateProfile")
     public ResponseEntity<?> updateProfile(@RequestBody ProfileDTO profileDTO, @AuthenticationPrincipal UserDetails userDetails){
         if(userDetails==null || userDetails.getUsername()==null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
@@ -88,6 +91,29 @@ public class NGOController {
 
         return ngoServices.updateProfile(profileDTO,userDetails.getUsername());
 
+    }
+
+    @PreAuthorize("hasRole('NGO')")
+    @PostMapping("/changePass")
+    public ResponseEntity<?> changePass(@RequestBody ChangePassDTO passDTO, @AuthenticationPrincipal UserDetails userDetails){
+        if(userDetails==null || userDetails.getUsername()==null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+        }
+
+        return ngoServices.changePass(passDTO,userDetails.getUsername());
+    }
+
+    @PreAuthorize("hasRole('NGO')")
+    @PostMapping("/enroll")
+   public ResponseEntity<EndUser> enroll(@RequestBody EndUserDTO dto){
+        EndUser saveUser = ngoServices.enrollUsers(dto);
+        return new ResponseEntity<>(saveUser,HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('NGO')")
+    @GetMapping("/allUsers")
+    public List<EndUser> getUsers(){
+        return ngoServices.getAllUsers();
     }
 
 
