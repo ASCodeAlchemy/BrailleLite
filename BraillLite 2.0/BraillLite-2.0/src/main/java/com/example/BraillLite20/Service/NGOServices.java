@@ -1,16 +1,15 @@
 package com.example.BraillLite20.Service;
 
-import com.example.BraillLite20.DTOs.RequestDTO.ChangePassDTO;
-import com.example.BraillLite20.DTOs.RequestDTO.EndUserDTO;
-import com.example.BraillLite20.DTOs.RequestDTO.NGODto;
-import com.example.BraillLite20.DTOs.RequestDTO.ProfileDTO;
+import com.example.BraillLite20.DTOs.RequestDTO.*;
 import com.example.BraillLite20.DTOs.ResponseDTO.ResponseDTO;
 import com.example.BraillLite20.Entity.Donor;
 import com.example.BraillLite20.Entity.EndUser;
 import com.example.BraillLite20.Entity.NGO;
+import com.example.BraillLite20.Entity.Programs;
 import com.example.BraillLite20.Repositories.DonorRepo;
 import com.example.BraillLite20.Repositories.EndUserRepo;
 import com.example.BraillLite20.Repositories.NGORepo;
+import com.example.BraillLite20.Repositories.ProgramRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,14 +30,16 @@ public class NGOServices {
     private final PasswordEncoder encoder;
     private final DonorRepo donorRepo;
     private final EndUserRepo endUserRepo;
+    private final ProgramRepo programRepo;
 
 
     @Autowired
-    public NGOServices(NGORepo ngoRepo,PasswordEncoder encoder,DonorRepo donorRepo,EndUserRepo endUserRepo) {
+    public NGOServices(NGORepo ngoRepo,PasswordEncoder encoder,DonorRepo donorRepo,EndUserRepo endUserRepo,ProgramRepo programRepo) {
         this.ngoRepo = ngoRepo;
         this.encoder=encoder;
         this.donorRepo=donorRepo;
         this.endUserRepo=endUserRepo;
+        this.programRepo=programRepo;
     }
 
     public ResponseDTO registerNgo(NGODto ngoDto){
@@ -171,6 +172,33 @@ public class NGOServices {
 
     public List<EndUser> getAllUsers(){
         return endUserRepo.findAll();
+    }
+
+    public List<EndUser> searchUser(String keyword){
+        return endUserRepo.searchUser(keyword);
+    }
+
+    public ResponseEntity<?> addPrograms(ProgramDTO dto ,String email) {
+        Optional<NGO> findEmail = ngoRepo.findByEmail(email);
+        if (findEmail.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("NGO Not Found");
+        }
+
+        Programs programs = new Programs();
+
+        programs.setProg_name(dto.getProg_name());
+        programs.setDescription(dto.getDescription());
+        programs.setActivities(dto.getActivities());
+
+        programRepo.save(programs);
+
+        return ResponseEntity.ok("Program added successfully");
+
+
+    }
+
+    public List<Programs> getAllProgs(){
+        return programRepo.findAll();
     }
 
 }

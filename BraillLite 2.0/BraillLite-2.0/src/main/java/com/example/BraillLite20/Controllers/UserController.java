@@ -1,6 +1,8 @@
 package com.example.BraillLite20.Controllers;
 
+import com.example.BraillLite20.DTOs.RequestDTO.ChangePassDTO;
 import com.example.BraillLite20.DTOs.RequestDTO.UserDTO;
+import com.example.BraillLite20.DTOs.RequestDTO.UserProfileDTO;
 import com.example.BraillLite20.DTOs.ResponseDTO.ResponseDTO;
 import com.example.BraillLite20.Service.JWTServices;
 import com.example.BraillLite20.Service.MyUserDetailService;
@@ -10,7 +12,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter;
 
 @RestController
 @RequestMapping("/api")
@@ -20,15 +26,15 @@ public class UserController {
 private final UserService userService;
     private final MyUserDetailService myUserDetailService;
     private final JWTServices jwtServices;
-
+    private final AbstractHandlerMethodAdapter abstractHandlerMethodAdapter;
 
 
     @Autowired
-    public UserController( UserService userService,MyUserDetailService myUserDetailService,JWTServices jwtServices) {
+    public UserController(UserService userService, MyUserDetailService myUserDetailService, JWTServices jwtServices, AbstractHandlerMethodAdapter abstractHandlerMethodAdapter) {
         this.userService = userService;
         this.myUserDetailService = myUserDetailService;
         this.jwtServices = jwtServices;
-
+        this.abstractHandlerMethodAdapter = abstractHandlerMethodAdapter;
     }
 
     @PostMapping("/users/register")
@@ -68,6 +74,35 @@ private final UserService userService;
         response.addCookie(cookie);
        ResponseDTO responseDto = new ResponseDTO("Logout Successful");
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/users/myProfile")
+    public UserProfileDTO getProfile(@AuthenticationPrincipal UserDetails userDetails){
+        if (userDetails == null || userDetails.getUsername()==null){
+            throw new IllegalArgumentException("Unauthorized");
+        }
+        return userService.getProfile(userDetails.getUsername());
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @PostMapping("/users/updateProfile")
+    public ResponseEntity<?> updateProfile(@RequestBody UserProfileDTO profileDTO, @AuthenticationPrincipal UserDetails userDetails){
+        if(userDetails==null || userDetails.getUsername()== null){
+            throw new IllegalArgumentException("Unauthorized");
+        }
+        return userService.updateProfile(profileDTO,userDetails.getUsername());
+    }
+
+
+    @PreAuthorize("hasRole('USER')")
+    @PostMapping("/users/changePass")
+    public ResponseEntity<?> changePass(@RequestBody ChangePassDTO passDTO, @AuthenticationPrincipal UserDetails userDetails){
+        if(userDetails==null || userDetails.getUsername()== null){
+            throw new IllegalArgumentException("Unauthorized");
+        }
+
+        return userService.changePass(passDTO,userDetails.getUsername());
     }
 
 

@@ -1,13 +1,11 @@
 package com.example.BraillLite20.Service;
 
-import com.example.BraillLite20.DTOs.RequestDTO.ProfileDTO;
+import com.example.BraillLite20.DTOs.RequestDTO.ChangePassDTO;
 import com.example.BraillLite20.DTOs.RequestDTO.UserDTO;
+import com.example.BraillLite20.DTOs.RequestDTO.UserProfileDTO;
 import com.example.BraillLite20.DTOs.ResponseDTO.ResponseDTO;
-import com.example.BraillLite20.Entity.NGO;
 import com.example.BraillLite20.Entity.Users;
-import com.example.BraillLite20.Repositories.NGORepo;
 import com.example.BraillLite20.Repositories.UserRepo;
-import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,17 +19,12 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepo userRepo;
-    private final NGORepo ngoRepo;
     private final PasswordEncoder encoder;
-    private final JWTServices jwtServices;
-
 
     @Autowired
-    public UserService(UserRepo userRepo,NGORepo ngoRepo, PasswordEncoder encoder,JWTServices jwtServices) {
+    public UserService(UserRepo userRepo, PasswordEncoder encoder) {
         this.userRepo = userRepo;
         this.encoder = encoder;
-        this.jwtServices=jwtServices;
-        this.ngoRepo =ngoRepo;
 
     }
 
@@ -75,6 +68,64 @@ public class UserService {
             return new ResponseDTO("Invalid Password");
         }
         return new ResponseDTO("Login Successful");
+    }
+
+    public UserProfileDTO getProfile(String email){
+        Optional<Users> findEmail = userRepo.findByEmail(email);
+        if(findEmail.isEmpty()){
+            throw new IllegalArgumentException("User not Found");
+        }
+        UserProfileDTO dto = new UserProfileDTO();
+        Users user = findEmail.get();
+
+        user.setName(dto.getName());
+        user.setUsername(dto.getUsername());
+        user.setEmail(dto.getEmail());
+        user.setPhone(dto.getPhone());
+        user.setAddress(dto.getAddress());
+
+        return dto;
+    }
+
+    public ResponseEntity<?> updateProfile(UserProfileDTO profileDTO, String email){
+        Optional<Users> prof = userRepo.findByEmail(email);
+        if(prof.isEmpty()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email not found");
+        }
+
+        Users user = prof.get();
+
+        if(profileDTO.getUsername()!=null){
+            user.setUsername(profileDTO.getUsername());
+        }
+        if(profileDTO.getName()!=null){
+            user.setName(profileDTO.getName());
+        }
+        if(profileDTO.getAddress()!=null){
+            user.setAddress(profileDTO.getAddress());
+        }
+        if(profileDTO.getPhone()!=null){
+            user.setPhone(profileDTO.getPhone());
+        }
+
+      userRepo.save(user);
+        return ResponseEntity.ok("Profile Updates Successfully");
+    }
+
+    public ResponseEntity<?> changePass(ChangePassDTO passDTO, String email){
+        Optional<Users> passEmail = userRepo.findByEmail(email);
+        if(passEmail.isEmpty()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User Not Found");
+
+        }
+        Users user = passEmail.get();
+        if(!encoder.matches(passDTO.getOldPass(),passDTO.getNewPass())){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Old password is incorrect");
+        }
+        user.setAddress(encoder.encode(passDTO.getNewPass()));
+        userRepo.save(user);
+        return ResponseEntity.ok("Password Changed Successfully");
+
     }
 
 

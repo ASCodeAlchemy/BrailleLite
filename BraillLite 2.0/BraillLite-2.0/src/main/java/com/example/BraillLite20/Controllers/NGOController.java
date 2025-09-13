@@ -1,12 +1,10 @@
 package com.example.BraillLite20.Controllers;
 
-import com.example.BraillLite20.DTOs.RequestDTO.ChangePassDTO;
-import com.example.BraillLite20.DTOs.RequestDTO.EndUserDTO;
-import com.example.BraillLite20.DTOs.RequestDTO.NGODto;
-import com.example.BraillLite20.DTOs.RequestDTO.ProfileDTO;
+import com.example.BraillLite20.DTOs.RequestDTO.*;
 import com.example.BraillLite20.DTOs.ResponseDTO.ResponseDTO;
 import com.example.BraillLite20.Entity.Donor;
 import com.example.BraillLite20.Entity.EndUser;
+import com.example.BraillLite20.Entity.Programs;
 import com.example.BraillLite20.Service.JWTServices;
 import com.example.BraillLite20.Service.MyUserDetailService;
 import com.example.BraillLite20.Service.NGOServices;
@@ -114,6 +112,32 @@ public class NGOController {
     @GetMapping("/allUsers")
     public List<EndUser> getUsers(){
         return ngoServices.getAllUsers();
+    }
+
+
+    @PreAuthorize("hasRole('NGO')")
+    @GetMapping("/search/{key}")
+    public ResponseEntity<List<EndUser>> searchUser(@PathVariable("key") String keyword){
+        List<EndUser> search = ngoServices.searchUser(keyword);
+        return new ResponseEntity<>(search,HttpStatus.OK);
+    }
+
+
+
+    @PreAuthorize("hasRole('NGO')")
+    @PostMapping("/addPrograms")
+    public ResponseEntity<?> addPrograms(@RequestBody ProgramDTO dto, @AuthenticationPrincipal UserDetails userDetails){
+        if(userDetails==null || userDetails.getUsername()==null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+        }
+
+        return ngoServices.addPrograms(dto,userDetails.getUsername());
+    }
+
+
+    @GetMapping("/getPrograms")
+    public List<Programs> getPrograms(){
+        return ngoServices.getAllProgs();
     }
 
 
