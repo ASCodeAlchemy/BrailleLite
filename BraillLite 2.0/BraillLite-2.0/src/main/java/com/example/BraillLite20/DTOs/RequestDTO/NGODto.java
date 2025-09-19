@@ -12,12 +12,12 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 public class NGODto {
+    private String organizationName;
+    private String email;
+    private String password;
+    private String address;
+    private String contactPersonName;
+    private String contactPersonPhone;
+    private Timestamp createdAt;
 
-    String organization_name;
-    String email;
-    String password;
-    String address;
-    String contactPerson_name;
-    String contactPerson_Phone;
-    Timestamp createdAt;
 }

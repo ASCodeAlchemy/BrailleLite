@@ -1,10 +1,15 @@
 package com.example.BraillLite20.Service;
 
+import com.example.BraillLite20.DTOs.RequestDTO.ApplicationDTO;
 import com.example.BraillLite20.DTOs.RequestDTO.ChangePassDTO;
 import com.example.BraillLite20.DTOs.RequestDTO.UserDTO;
 import com.example.BraillLite20.DTOs.RequestDTO.UserProfileDTO;
 import com.example.BraillLite20.DTOs.ResponseDTO.ResponseDTO;
+import com.example.BraillLite20.Entity.Applications;
+import com.example.BraillLite20.Entity.Programs;
 import com.example.BraillLite20.Entity.Users;
+import com.example.BraillLite20.Repositories.ApplicationRepo;
+import com.example.BraillLite20.Repositories.ProgramRepo;
 import com.example.BraillLite20.Repositories.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,11 +26,15 @@ public class UserService {
 
     private final UserRepo userRepo;
     private final PasswordEncoder encoder;
+    private final ApplicationRepo applicationRepo;
+    private final ProgramRepo programRepo;
 
     @Autowired
-    public UserService(UserRepo userRepo, PasswordEncoder encoder) {
+    public UserService(UserRepo userRepo, PasswordEncoder encoder,ApplicationRepo applicationRepo,ProgramRepo programRepo) {
         this.userRepo = userRepo;
         this.encoder = encoder;
+        this.applicationRepo=applicationRepo;
+        this.programRepo=programRepo;
 
     }
 
@@ -78,11 +88,12 @@ public class UserService {
         UserProfileDTO dto = new UserProfileDTO();
         Users user = findEmail.get();
 
-        user.setName(dto.getName());
-        user.setUsername(dto.getUsername());
-        user.setEmail(dto.getEmail());
-        user.setPhone(dto.getPhone());
-        user.setAddress(dto.getAddress());
+        // Fix: Set DTO fields from user, not the other way around
+        dto.setName(user.getName());
+        dto.setUsername(user.getUsername());
+        dto.setEmail(user.getEmail());
+        dto.setPhone(user.getPhone());
+        dto.setAddress(user.getAddress());
 
         return dto;
     }
@@ -119,17 +130,61 @@ public class UserService {
 
         }
         Users user = passEmail.get();
-        if(!encoder.matches(passDTO.getOldPass(),passDTO.getNewPass())){
+        if(!encoder.matches(passDTO.getOldPass(), user.getPassword())){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Old password is incorrect");
         }
-        user.setAddress(encoder.encode(passDTO.getNewPass()));
+        user.setPassword(encoder.encode(passDTO.getNewPass()));
         userRepo.save(user);
         return ResponseEntity.ok("Password Changed Successfully");
 
     }
 
+    public ResponseEntity<ResponseDTO> enroll(ApplicationDTO dto, String userEmail, Long programId) {
+        try {
+            Optional<Users> userOptional = userRepo.findByEmail(userEmail);
+            if (userOptional.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new ResponseDTO("User not found"));
+            }
+
+            Optional<Programs> programOptional = programRepo.findById(programId.intValue());
+            if (programOptional.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new ResponseDTO("Program not found"));
+            }
+
+            Users user = userOptional.get();
+            Programs program = programOptional.get();
+
+            Optional<Applications> existingApplication = applicationRepo.findByEmailAndPrograms(user.getEmail(), program);
+            if (existingApplication.isPresent()) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body(new ResponseDTO("User is already enrolled in this program"));
+            }
+
+            Applications application = new Applications();
+            application.setName(user.getName());
+            application.setEmail(user.getEmail());
+            application.setSkills(dto.getSkills());
+            application.setPrograms(program);
+            application.setProgram(program.getProg_name());
+
+            applicationRepo.save(application);
+
+            return ResponseEntity.ok(new ResponseDTO("Successfully enrolled in program: " + program.getProg_name()));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDTO("Error during enrollment: " + e.getMessage()));
+        }
+    }
+
+
+    public List<Programs> getPrograms(){
+        return programRepo.findAll();
+    }
+
+
+
 
 }
-
-
-

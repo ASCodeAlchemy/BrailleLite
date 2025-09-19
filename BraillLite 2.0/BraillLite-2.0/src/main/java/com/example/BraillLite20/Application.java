@@ -3,8 +3,6 @@ package com.example.BraillLite20;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.security.SecureRandom;
-import java.util.Base64;
 
 @SpringBootApplication
 public class Application {
@@ -18,6 +16,8 @@ public class Application {
 //        System.out.println(Base64.getEncoder().encodeToString(bytes));
 
 
-	}
+
+
+    }
 
 }

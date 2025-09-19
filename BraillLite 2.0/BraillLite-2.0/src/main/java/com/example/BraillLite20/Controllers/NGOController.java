@@ -2,6 +2,7 @@ package com.example.BraillLite20.Controllers;
 
 import com.example.BraillLite20.DTOs.RequestDTO.*;
 import com.example.BraillLite20.DTOs.ResponseDTO.ResponseDTO;
+import com.example.BraillLite20.Entity.Applications;
 import com.example.BraillLite20.Entity.Donor;
 import com.example.BraillLite20.Entity.EndUser;
 import com.example.BraillLite20.Entity.Programs;
@@ -135,9 +136,19 @@ public class NGOController {
     }
 
 
+    @PreAuthorize("hasRole('NGO')")
     @GetMapping("/getPrograms")
     public List<Programs> getPrograms(){
         return ngoServices.getAllProgs();
+    }
+
+    @PreAuthorize("hasRole('NGO')")
+    @GetMapping("/getApplications")
+    public List<Applications> getApplications(@AuthenticationPrincipal UserDetails userDetails){
+        if(userDetails==null || userDetails.getUsername()==null){
+            throw new IllegalArgumentException("Unauthorized");
+        }
+        return ngoServices.getAllApplications();
     }
 
 

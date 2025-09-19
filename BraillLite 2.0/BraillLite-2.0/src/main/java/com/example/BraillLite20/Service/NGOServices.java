@@ -2,14 +2,8 @@ package com.example.BraillLite20.Service;
 
 import com.example.BraillLite20.DTOs.RequestDTO.*;
 import com.example.BraillLite20.DTOs.ResponseDTO.ResponseDTO;
-import com.example.BraillLite20.Entity.Donor;
-import com.example.BraillLite20.Entity.EndUser;
-import com.example.BraillLite20.Entity.NGO;
-import com.example.BraillLite20.Entity.Programs;
-import com.example.BraillLite20.Repositories.DonorRepo;
-import com.example.BraillLite20.Repositories.EndUserRepo;
-import com.example.BraillLite20.Repositories.NGORepo;
-import com.example.BraillLite20.Repositories.ProgramRepo;
+import com.example.BraillLite20.Entity.*;
+import com.example.BraillLite20.Repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,15 +25,17 @@ public class NGOServices {
     private final DonorRepo donorRepo;
     private final EndUserRepo endUserRepo;
     private final ProgramRepo programRepo;
+    private final ApplicationRepo applicationRepo;
 
 
     @Autowired
-    public NGOServices(NGORepo ngoRepo,PasswordEncoder encoder,DonorRepo donorRepo,EndUserRepo endUserRepo,ProgramRepo programRepo) {
+    public NGOServices(NGORepo ngoRepo,PasswordEncoder encoder,DonorRepo donorRepo,EndUserRepo endUserRepo,ProgramRepo programRepo, ApplicationRepo applicationRepo) {
         this.ngoRepo = ngoRepo;
         this.encoder=encoder;
         this.donorRepo=donorRepo;
         this.endUserRepo=endUserRepo;
         this.programRepo=programRepo;
+        this.applicationRepo=applicationRepo;
     }
 
     public ResponseDTO registerNgo(NGODto ngoDto){
@@ -62,9 +58,9 @@ public class NGOServices {
         ngo.setPassword(encoder.encode(ngoDto.getPassword()));
         ngo.setEmail(ngoDto.getEmail());
         ngo.setAddress(ngoDto.getAddress());
-        ngo.setOrganization_name(ngoDto.getOrganization_name());
-        ngo.setContactPerson_name(ngoDto.getContactPerson_name());
-        ngo.setContactPerson_Phone(ngoDto.getContactPerson_Phone());
+        ngo.setOrganization_name(ngoDto.getOrganizationName());
+        ngo.setContactPerson_name(ngoDto.getContactPersonName());
+        ngo.setContactPerson_Phone(ngoDto.getContactPersonPhone());
         ngo.setCreatedAt(new Timestamp(System.currentTimeMillis()));
 
         return ngo;
@@ -199,6 +195,10 @@ public class NGOServices {
 
     public List<Programs> getAllProgs(){
         return programRepo.findAll();
+    }
+
+    public List<Applications> getAllApplications(){
+        return applicationRepo.findAll();
     }
 
 }

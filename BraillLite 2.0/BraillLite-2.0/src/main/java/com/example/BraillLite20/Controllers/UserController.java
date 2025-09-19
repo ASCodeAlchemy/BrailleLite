@@ -1,9 +1,11 @@
 package com.example.BraillLite20.Controllers;
 
+import com.example.BraillLite20.DTOs.RequestDTO.ApplicationDTO;
 import com.example.BraillLite20.DTOs.RequestDTO.ChangePassDTO;
 import com.example.BraillLite20.DTOs.RequestDTO.UserDTO;
 import com.example.BraillLite20.DTOs.RequestDTO.UserProfileDTO;
 import com.example.BraillLite20.DTOs.ResponseDTO.ResponseDTO;
+import com.example.BraillLite20.Entity.Programs;
 import com.example.BraillLite20.Service.JWTServices;
 import com.example.BraillLite20.Service.MyUserDetailService;
 import com.example.BraillLite20.Service.UserService;
@@ -16,7 +18,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter;
+
+import java.util.*;
 
 @RestController
 @RequestMapping("/api")
@@ -26,15 +29,14 @@ public class UserController {
 private final UserService userService;
     private final MyUserDetailService myUserDetailService;
     private final JWTServices jwtServices;
-    private final AbstractHandlerMethodAdapter abstractHandlerMethodAdapter;
 
 
     @Autowired
-    public UserController(UserService userService, MyUserDetailService myUserDetailService, JWTServices jwtServices, AbstractHandlerMethodAdapter abstractHandlerMethodAdapter) {
+    public UserController(UserService userService, MyUserDetailService myUserDetailService, JWTServices jwtServices) {
         this.userService = userService;
         this.myUserDetailService = myUserDetailService;
         this.jwtServices = jwtServices;
-        this.abstractHandlerMethodAdapter = abstractHandlerMethodAdapter;
+
     }
 
     @PostMapping("/users/register")
@@ -107,8 +109,30 @@ private final UserService userService;
 
 
 
+    @PreAuthorize("hasRole('USER')")
+    @PostMapping("/users/enroll/{programId}")
+    public ResponseEntity<ResponseDTO> enroll(
+            @PathVariable Long programId,
+            @RequestBody ApplicationDTO dto,
+            @AuthenticationPrincipal UserDetails userDetails) {
 
+        if (userDetails == null || userDetails.getUsername() == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ResponseDTO("Unauthorized - Please login first"));
+        }
+
+        return userService.enroll(dto, userDetails.getUsername(), programId);
     }
 
 
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/users/programs")
+    public List<Programs> getPrograms(@AuthenticationPrincipal UserDetails userDetails){
+        if(userDetails==null || userDetails.getUsername() ==null){
+            throw new IllegalArgumentException("Unauthorized");
+        }
 
+        return userService.getPrograms();
+    }
+
+}

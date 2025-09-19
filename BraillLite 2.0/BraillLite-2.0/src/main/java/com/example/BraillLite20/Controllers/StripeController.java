@@ -4,6 +4,7 @@ import com.example.BraillLite20.Entity.Donor;
 import com.example.BraillLite20.Repositories.DonorRepo;
 import com.example.BraillLite20.Service.StripeService;
 import com.stripe.model.PaymentIntent;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +18,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/api/payment")
+@CrossOrigin(origins = "http://localhost:8000",allowCredentials = "true")
 public class StripeController {
 
     private final StripeService stripeService;
@@ -51,6 +53,25 @@ public class StripeController {
     }
 
 
+//    @GetMapping("/success")
+//    public ResponseEntity<?> success(@RequestParam("session_id") String sessionId) throws StripeException {
+//        Session session = Session.retrieve(sessionId);
+//        PaymentIntent paymentIntent = PaymentIntent.retrieve(session.getPaymentIntent());
+//        String status = paymentIntent.getStatus();
+//
+//        if ("succeeded".equals(status)) {
+//            String donorId = session.getMetadata().get("donorId");
+//            donorRepo.findById(Integer.parseInt(donorId)).ifPresent(d -> {
+//                d.setPayment_status("SUCCESS");
+//                donorRepo.save(d);
+//            });
+//
+//            return ResponseEntity.ok("Donation successful , sessionId: " + sessionId);
+//        } else {
+//            return ResponseEntity.ok("Payment not successful , status: " + status);
+//        }
+//    }
+
     @GetMapping("/success")
     public ResponseEntity<?> success(@RequestParam("session_id") String sessionId) throws StripeException {
         Session session = Session.retrieve(sessionId);
@@ -58,15 +79,28 @@ public class StripeController {
         String status = paymentIntent.getStatus();
 
         if ("succeeded".equals(status)) {
-            String donorId = session.getMetadata().get("donorId");
-            donorRepo.findById(Integer.parseInt(donorId)).ifPresent(d -> {
-                d.setPayment_status("SUCCESS");
-                donorRepo.save(d);
-            });
+            String donorIdStr = session.getMetadata().get("donorId");
+            if (donorIdStr == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Donor ID missing in session metadata");
+            }
 
-            return ResponseEntity.ok("Donation successful , sessionId: " + sessionId);
+            Optional<Donor> donorOpt = donorRepo.findById(Integer.parseInt(donorIdStr));
+            if (donorOpt.isPresent()) {
+                Donor donor = donorOpt.get();
+                donor.setPayment_status("SUCCESS");
+                donorRepo.save(donor);
+
+                Map<String, Object> receipt = new HashMap<>();
+                receipt.put("fullName", donor.getFullName());
+                receipt.put("amount", donor.getAmount());
+                receipt.put("sessionId", sessionId);
+
+                return ResponseEntity.ok(receipt);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Donor not found");
+            }
         } else {
-            return ResponseEntity.ok("Payment not successful , status: " + status);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Payment not successful, status: " + status);
         }
     }
 
