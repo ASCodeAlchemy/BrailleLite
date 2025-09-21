@@ -1,12 +1,48 @@
+
 import { useState } from "react";
-import { programs, Program } from "../data/programsData"; // Assuming this is your data source
+import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { Calendar, MapPin, Users, MoreHorizontal, PlusCircle, LayoutGrid, List, Search, Inbox, Sparkles, Wind } from "lucide-react";
+import { 
+    Calendar, 
+    MapPin, 
+    Users, 
+    MoreHorizontal, 
+    PlusCircle, 
+    LayoutGrid, 
+    List, 
+    Search, 
+    Inbox, 
+    Sparkles, 
+    Wind,
+    Sun,
+    Moon,
+    ArrowLeft
+} from "lucide-react";
+
+// --- MOCK DATA & TYPE DEFINITION ---
+export type Program = {
+  id: number;
+  title: string;
+  description: string;
+  date: string;
+  place: string;
+  status: "draft" | "ongoing" | "upcoming" | "completed";
+  volunteersCount: number;
+  volunteersRequired?: number;
+};
+
+const programs: Program[] = [
+    { id: 1, title: "Annual Food Drive", description: "Collecting non-perishable food items for local families in need.", date: "2025-11-15", place: "Community Hall, Nashik", status: "upcoming", volunteersCount: 12, volunteersRequired: 20 },
+    { id: 2, title: "River Cleanup", description: "Cleaning up the Godavari river banks to promote a healthier ecosystem.", date: "2025-10-05", place: "Godavari Ghat, Nashik", status: "ongoing", volunteersCount: 25, volunteersRequired: 30 },
+    { id: 3, title: "Winter Clothing Donation", description: "Distributing warm clothes to the homeless during the winter season.", date: "2024-12-20", place: "Main City Square, Nashik", status: "completed", volunteersCount: 18, volunteersRequired: 15 },
+    { id: 4, title: "Educational Workshop", description: "Free workshops on basic computer skills for underprivileged youth.", date: "2025-09-30", place: "Nashik Public Library", status: "draft", volunteersCount: 5, volunteersRequired: 10 },
+];
+
 
 // Helper for dynamic card headers
 const cardVisuals = [
@@ -99,6 +135,7 @@ const EmptyState = () => (
 const ProgramsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
 
   const filteredPrograms = programs.filter(
     (p) =>
@@ -107,83 +144,98 @@ const ProgramsPage = () => {
   );
 
   return (
-    <div className="relative min-h-screen w-full bg-slate-50 dark:bg-slate-950 overflow-hidden">
-        {/* Background Blobs */}
-        <div className="absolute top-0 left-0 w-96 h-96 bg-blue-200 rounded-full filter blur-3xl opacity-30 animate-blob dark:opacity-20"></div>
-        <div className="absolute top-0 right-0 w-96 h-96 bg-yellow-200 rounded-full filter blur-3xl opacity-30 animate-blob animation-delay-2000 dark:opacity-20"></div>
-        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-sky-200 rounded-full filter blur-3xl opacity-30 animate-blob animation-delay-4000 dark:opacity-20"></div>
+    <div className={`${theme} theme-transition`}>
+        <div className="relative min-h-screen w-full bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50 overflow-hidden">
+            {/* Background Blobs */}
+            <div className="absolute top-0 left-0 w-96 h-96 bg-blue-200 rounded-full filter blur-3xl opacity-30 animate-blob dark:opacity-20"></div>
+            <div className="absolute top-0 right-0 w-96 h-96 bg-yellow-200 rounded-full filter blur-3xl opacity-30 animate-blob animation-delay-2000 dark:opacity-20"></div>
+            <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-sky-200 rounded-full filter blur-3xl opacity-30 animate-blob animation-delay-4000 dark:opacity-20"></div>
 
-        <main className="relative z-10 p-4 md:p-6 space-y-6">
-            {/* Header */}
-            <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
+            <main className="relative z-10 p-4 md:p-6 space-y-6">
+                {/* Header */}
+                <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
+                    <div>
+                        <h1 className="text-3xl font-bold tracking-tight">Programs</h1>
+                        <p className="text-muted-foreground">Manage and view all organizational programs.</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <Button size="lg" className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white">
+                            <PlusCircle className="mr-2 h-5 w-5" />
+                            Create New Program
+                        </Button>
+                         <Button variant="outline" size="icon" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
+                            <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                            <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                            <span className="sr-only">Toggle theme</span>
+                        </Button>
+                        <Link to="/ngodash">
+                            <Button variant="outline">
+                                <ArrowLeft className="mr-2 h-4 w-4" />
+                                Back
+                            </Button>
+                        </Link>
+                    </div>
+                </div>
+
+                {/* Toolbar */}
+                <div className="flex flex-col md:flex-row items-center gap-2">
+                    <div className="relative w-full md:flex-1">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input
+                            placeholder="Search by title or place..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="pl-9 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm"
+                        />
+                    </div>
+                    <div className="flex gap-2">
+                        <Button variant="outline" className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">Filter</Button>
+                        <div className="flex items-center gap-1 rounded-md bg-white/80 dark:bg-slate-900/80 p-1 backdrop-blur-sm">
+                            <Button variant={viewMode === 'grid' ? 'secondary' : 'ghost'} size="sm" onClick={() => setViewMode('grid')}>
+                                <LayoutGrid className="h-4 w-4" />
+                            </Button>
+                            <Button variant={viewMode === 'list' ? 'secondary' : 'ghost'} size="sm" onClick={() => setViewMode('list')}>
+                                <List className="h-4 w-4" />
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+                
+                {/* Content Area */}
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-50">Programs</h1>
-                    <p className="text-muted-foreground">Manage and view all organizational programs.</p>
-                </div>
-                <Button size="lg" className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white">
-                    <PlusCircle className="mr-2 h-5 w-5" />
-                    Create New Program
-                </Button>
-            </div>
-
-            {/* Toolbar */}
-            <div className="flex flex-col md:flex-row items-center gap-2">
-                <div className="relative w-full md:flex-1">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                        placeholder="Search by title or place..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-9 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm"
-                    />
-                </div>
-                <div className="flex gap-2">
-                    <Button variant="outline" className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">Filter</Button>
-                    <div className="flex items-center gap-1 rounded-md bg-white/80 dark:bg-slate-900/80 p-1 backdrop-blur-sm">
-                        <Button variant={viewMode === 'grid' ? 'secondary' : 'ghost'} size="sm" onClick={() => setViewMode('grid')}>
-                            <LayoutGrid className="h-4 w-4" />
-                        </Button>
-                        <Button variant={viewMode === 'list' ? 'secondary' : 'ghost'} size="sm" onClick={() => setViewMode('list')}>
-                            <List className="h-4 w-4" />
-                        </Button>
-                    </div>
-                </div>
-            </div>
-            
-            {/* Content Area */}
-            <div>
-                {filteredPrograms.length === 0 ? <EmptyState /> : (
-                viewMode === "grid" ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        {filteredPrograms.map((program, index) => (
-                            <ProgramCard key={program.id} program={program} index={index} />
-                        ))}
-                    </div>
-                ) : (
-                    <Card className="rounded-xl border border-white/30 bg-white/60 dark:bg-black/40 backdrop-blur-lg">
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Title</TableHead><TableHead>Place</TableHead><TableHead>Date</TableHead><TableHead>Volunteers</TableHead><TableHead>Status</TableHead><TableHead><span className="sr-only">Actions</span></TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {filteredPrograms.map((program) => (
-                                    <TableRow key={program.id} className="border-slate-200/50 dark:border-slate-800/50">
-                                        <TableCell className="font-medium">{program.title}</TableCell>
-                                        <TableCell>{program.place}</TableCell>
-                                        <TableCell>{program.date}</TableCell>
-                                        <TableCell>{program.volunteersCount} / {program.volunteersRequired}</TableCell>
-                                        <TableCell>{getStatusBadge(program.status)}</TableCell>
-                                        <TableCell><ProgramActions program={program} /></TableCell>
+                    {filteredPrograms.length === 0 ? <EmptyState /> : (
+                    viewMode === "grid" ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                            {filteredPrograms.map((program, index) => (
+                                <ProgramCard key={program.id} program={program} index={index} />
+                            ))}
+                        </div>
+                    ) : (
+                        <Card className="rounded-xl border border-white/30 bg-white/60 dark:bg-black/40 backdrop-blur-lg">
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>Title</TableHead><TableHead>Place</TableHead><TableHead>Date</TableHead><TableHead>Volunteers</TableHead><TableHead>Status</TableHead><TableHead><span className="sr-only">Actions</span></TableHead>
                                     </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </Card>
-                ))}
-            </div>
-        </main>
+                                </TableHeader>
+                                <TableBody>
+                                    {filteredPrograms.map((program) => (
+                                        <TableRow key={program.id} className="border-slate-200/50 dark:border-slate-800/50">
+                                            <TableCell className="font-medium">{program.title}</TableCell>
+                                            <TableCell>{program.place}</TableCell>
+                                            <TableCell>{program.date}</TableCell>
+                                            <TableCell>{program.volunteersCount} / {program.volunteersRequired}</TableCell>
+                                            <TableCell>{getStatusBadge(program.status)}</TableCell>
+                                            <TableCell><ProgramActions program={program} /></TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </Card>
+                    ))}
+                </div>
+            </main>
+        </div>
     </div>
   );
 };

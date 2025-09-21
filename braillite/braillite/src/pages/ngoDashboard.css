@@ -1,0 +1,110 @@
+/* ngoDashboard.css
+   This file uses Tailwind's @apply for utility composition.
+   Ensure your PostCSS/Tailwind pipeline supports @apply in components.
+*/
+
+/* Root container */
+.ngo-dashboard {
+  @apply min-h-screen flex bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900;
+}
+
+/* Sidebar */
+.sidebar {
+  @apply fixed left-0 top-0 h-full bg-white dark:bg-slate-900 shadow-2xl transition-all duration-300 z-40;
+}
+.sidebar-header {
+  @apply flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800;
+}
+.brand-square {
+  @apply w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center;
+}
+.sidebar-title {
+  @apply font-semibold text-lg text-foreground;
+}
+.sidebar-content {
+  @apply mt-2 h-[calc(100vh-84px)] overflow-y-auto;
+}
+.sidebar-item {
+  @apply w-full flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-slate-100 dark:hover:bg-slate-800;
+}
+.sidebar-item.active {
+  @apply bg-indigo-100 text-indigo-700 dark:bg-indigo-800 dark:text-indigo-200;
+}
+.toggle-btn {
+  @apply rounded-md hover:bg-slate-100 dark:hover:bg-slate-800;
+}
+.icon {
+  @apply w-5 h-5;
+}
+
+/* Main content area */
+.main-content {
+  @apply flex-1 transition-all duration-300 min-h-screen;
+}
+
+/* Header (glass effect) */
+.header {
+  @apply sticky top-0 z-30 flex items-center justify-between px-6 h-16 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border-b border-slate-200 dark:border-slate-800;
+}
+
+/* Avatar sizing */
+.avatar-sm {
+  @apply w-9 h-9 rounded-full border-2 border-primary/30 overflow-hidden;
+}
+
+/* Cards */
+.stat-card {
+  @apply bg-white dark:bg-slate-800 rounded-xl shadow hover:shadow-lg transition duration-300 p-4;
+}
+.stat-card p:first-child {
+  @apply text-sm text-muted;
+}
+.stat-card p:last-child {
+  @apply text-2xl font-bold text-foreground;
+}
+
+/* Data cards */
+.data-card {
+  @apply bg-white dark:bg-slate-800 rounded-xl shadow-md overflow-hidden;
+}
+
+/* Search & filters */
+.search-input {
+  @apply px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 w-full;
+}
+.filter-select {
+  @apply px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-sm;
+}
+
+/* Table hover */
+.table-row-hover:hover {
+  @apply bg-white/5;
+}
+
+/* Badge styles */
+.badge-pending {
+  @apply bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-200 px-3 py-1 rounded-full text-sm;
+}
+.badge-approved {
+  @apply bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-200 px-3 py-1 rounded-full text-sm;
+}
+.badge-reviewed {
+  @apply bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-200 px-3 py-1 rounded-full text-sm;
+}
+.badge-active {
+  @apply bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-200 px-3 py-1 rounded-full text-sm;
+}
+.badge-completed {
+  @apply bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-200 px-3 py-1 rounded-full text-sm;
+}
+.badge-default {
+  @apply bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200 px-3 py-1 rounded-full text-sm;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .sidebar { @apply w-16; }
+  .main-content { @apply ml-16; }
+  .sidebar-title { @apply hidden; }
+  .search-input { @apply w-full; }
+}

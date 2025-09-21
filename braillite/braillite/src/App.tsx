@@ -13,7 +13,10 @@ import RegisterTypeSelection from "./pages/RegisterTypeSelection";
 import UserRegister from "./pages/UserRegister";
 import Donate from "./pages/Donate";
 import NGODashboard from "./pages/NGODashboard";
-import DonationSuccess from "@/pages/DonationSuccess.tsx";
+import UserDashboard from "./pages/UserDashboard";
+import ApplicationsPage from "./pages/Applications";
+import ProgramsPage from "./pages/Programs";
+import DonationsPage from "./pages/Donation";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -26,13 +29,16 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<LoginTypeSelection />} />
           <Route path="/login/user" element={<UserLogin />} />
-            <Route path="/login/ngo" element={<NGOLogin />} />
-            <Route path="/ngo/dashboard" element={<NGODashboard />} /> 
+          <Route path="/login/ngo" element={<NGOLogin />} />
           <Route path="/register" element={<RegisterTypeSelection />} />
           <Route path="/register/ngo" element={<NGORegister />} />
           <Route path="/register/user" element={<UserRegister />} />
-            <Route path="/donate" element={<Donate />} />
-            <Route path="/donation-success" element={<DonationSuccess />} />
+          <Route path="/donate" element={<Donate />} />
+          <Route path='/ngodash' element={<NGODashboard />} />
+          <Route path='/userdash' element={<UserDashboard />} />
+          <Route path='/ngodash/applications' element={<ApplicationsPage />} />
+          <Route path='/ngodash/programs' element={<ProgramsPage />} />
+          <Route path='/ngodash/donations' element={<DonationsPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

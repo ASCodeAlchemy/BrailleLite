@@ -1,5 +1,6 @@
 "use client";
 import { useState, useMemo } from "react";
+import { Link } from "react-router-dom"; // Change this import
 import { donations, Donation } from "../data/donationsData";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableHeader, TableRow, TableCell, TableHead, TableBody } from "@/components/ui/table";
@@ -17,7 +18,8 @@ import {
   Repeat,
   Receipt,
   Sun,
-  Moon
+  Moon,
+  ArrowLeft
 } from "lucide-react";
 import { Bar, Line } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, ChartOptions } from "chart.js";
@@ -100,33 +102,39 @@ const DonationsPage = () => {
 
           <main className="relative z-10 p-4 md:p-6 space-y-6 text-foreground">
               <div className="flex justify-between items-center">
-                <h1 className="text-3xl font-bold tracking-tight">Donations Dashboard</h1>
-                <div className="flex items-center gap-2">
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="outline" className="w-36 justify-start">
-                                <CalendarClock className="mr-2 h-4 w-4"/>
-                                {dateRange === '7d' && 'Last 7 Days'}
-                                {dateRange === '30d' && 'Last 30 Days'}
-                                {dateRange === '90d' && 'Last 90 Days'}
-                                {dateRange === 'all' && 'All Time'}
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                            <DropdownMenuRadioGroup value={dateRange} onValueChange={setDateRange}>
-                                <DropdownMenuRadioItem value="all">All Time</DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem value="7d">Last 7 Days</DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem value="30d">Last 30 Days</DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem value="90d">Last 90 Days</DropdownMenuRadioItem>
-                            </DropdownMenuRadioGroup>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                    <Button variant="outline" size="icon" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
-                        <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                        <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                        <span className="sr-only">Toggle theme</span>
-                    </Button>
-                </div>
+                  <h1 className="text-3xl font-bold tracking-tight">Donations Dashboard</h1>
+                  <div className="flex items-center gap-2">
+                      <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                              <Button variant="outline" className="w-36 justify-start">
+                                  <CalendarClock className="mr-2 h-4 w-4"/>
+                                  {dateRange === '7d' && 'Last 7 Days'}
+                                  {dateRange === '30d' && 'Last 30 Days'}
+                                  {dateRange === '90d' && 'Last 90 Days'}
+                                  {dateRange === 'all' && 'All Time'}
+                              </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent>
+                              <DropdownMenuRadioGroup value={dateRange} onValueChange={setDateRange}>
+                                  <DropdownMenuRadioItem value="all">All Time</DropdownMenuRadioItem>
+                                  <DropdownMenuRadioItem value="7d">Last 7 Days</DropdownMenuRadioItem>
+                                  <DropdownMenuRadioItem value="30d">Last 30 Days</DropdownMenuRadioItem>
+                                  <DropdownMenuRadioItem value="90d">Last 90 Days</DropdownMenuRadioItem>
+                              </DropdownMenuRadioGroup>
+                          </DropdownMenuContent>
+                      </DropdownMenu>
+                      <Button variant="outline" size="icon" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
+                          <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                          <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                          <span className="sr-only">Toggle theme</span>
+                      </Button>
+                      <Link to="/ngodash"> {/* Change href to to */}
+                        <Button variant="outline">
+                            <ArrowLeft className="mr-2 h-4 w-4" />
+                            Back
+                        </Button>
+                      </Link>
+                  </div>
               </div>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
