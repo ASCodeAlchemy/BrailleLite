@@ -1,4 +1,4 @@
-
+// src/pages/Programs.tsx
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,25 +24,8 @@ import {
     ArrowLeft
 } from "lucide-react";
 
-// --- MOCK DATA & TYPE DEFINITION ---
-export type Program = {
-  id: number;
-  title: string;
-  description: string;
-  date: string;
-  place: string;
-  status: "draft" | "ongoing" | "upcoming" | "completed";
-  volunteersCount: number;
-  volunteersRequired?: number;
-};
-
-const programs: Program[] = [
-    { id: 1, title: "Annual Food Drive", description: "Collecting non-perishable food items for local families in need.", date: "2025-11-15", place: "Community Hall, Nashik", status: "upcoming", volunteersCount: 12, volunteersRequired: 20 },
-    { id: 2, title: "River Cleanup", description: "Cleaning up the Godavari river banks to promote a healthier ecosystem.", date: "2025-10-05", place: "Godavari Ghat, Nashik", status: "ongoing", volunteersCount: 25, volunteersRequired: 30 },
-    { id: 3, title: "Winter Clothing Donation", description: "Distributing warm clothes to the homeless during the winter season.", date: "2024-12-20", place: "Main City Square, Nashik", status: "completed", volunteersCount: 18, volunteersRequired: 15 },
-    { id: 4, title: "Educational Workshop", description: "Free workshops on basic computer skills for underprivileged youth.", date: "2025-09-30", place: "Nashik Public Library", status: "draft", volunteersCount: 5, volunteersRequired: 10 },
-];
-
+// ✅ Import shared data + type
+import { programs, Program } from "@/data/programsData";
 
 // Helper for dynamic card headers
 const cardVisuals = [
@@ -87,7 +70,9 @@ const ProgramCard = ({ program, index }: { program: Program, index: number }) =>
                 <div className="flex items-center text-sm text-muted-foreground">
                     <Users className="mr-2 h-4 w-4" />
                     <span>
-                        {program.volunteersCount} / {program.volunteersRequired ? program.volunteersRequired : 'N/A'} volunteers
+                        {program.volunteersRequired 
+                          ? `${program.volunteersCount ?? 0} / ${program.volunteersCount}` 
+                          : "No volunteers required"}
                     </span>
                 </div>
             </CardFooter>

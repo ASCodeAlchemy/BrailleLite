@@ -17,6 +17,7 @@ import UserDashboard from "./pages/UserDashboard";
 import ApplicationsPage from "./pages/Applications";
 import ProgramsPage from "./pages/Programs";
 import DonationsPage from "./pages/Donation";
+import BeneficiariesPage from "./pages/BeneficiariesPage";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -39,6 +40,7 @@ const App = () => (
           <Route path='/ngodash/applications' element={<ApplicationsPage />} />
           <Route path='/ngodash/programs' element={<ProgramsPage />} />
           <Route path='/ngodash/donations' element={<DonationsPage />} />
+          <Route path='/ngodash/beneficiaries' element={<BeneficiariesPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
