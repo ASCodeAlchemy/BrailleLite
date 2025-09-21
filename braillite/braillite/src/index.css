@@ -1,0 +1,406 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Brailite Design System - Professional NGO Theme with Accessibility Focus */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
+@layer base {
+  :root {
+    /* Base Colors */
+    --background: 0 0% 100%;
+    --foreground: 215 25% 15%;
+
+    /* Card & Surface Colors */
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 15%;
+    --surface: 210 20% 98%;
+    --surface-foreground: 215 25% 15%;
+
+    /* Brand Colors - Professional NGO Theme */
+    --primary: 214 84% 25%;          /* Deep trustworthy blue */
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 214 84% 45%;    /* Lighter blue for accents */
+    --primary-dark: 214 84% 15%;     /* Darker blue for depth */
+
+    /* Empathy & Hope Colors */
+    --accent: 36 84% 55%;            /* Warm amber for hope */
+    --accent-foreground: 0 0% 100%;
+    --accent-light: 36 84% 75%;      /* Light amber for subtle touches */
+    --accent-dark: 36 84% 35%;       /* Dark amber for emphasis */
+
+    /* Secondary Colors */
+    --secondary: 210 20% 95%;
+    --secondary-foreground: 215 25% 15%;
+
+    /* Neutral Tones */
+    --muted: 210 20% 90%;
+    --muted-foreground: 215 15% 45%;
+    --subtle: 210 20% 96%;
+    --subtle-foreground: 215 15% 60%;
+
+    /* Status Colors */
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+    --warning: 36 84% 55%;
+    --warning-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Interactive Elements */
+    --border: 214 20% 85%;
+    --input: 214 20% 85%;
+    --ring: 214 84% 25%;
+
+    /* Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(214 84% 25%), hsl(214 84% 15%));
+    --gradient-accent: linear-gradient(135deg, hsl(36 84% 55%), hsl(36 84% 35%));
+    --gradient-subtle: linear-gradient(180deg, hsl(210 20% 98%), hsl(210 20% 95%));
+    --gradient-overlay: linear-gradient(180deg, hsla(215 25% 15% / 0.8), hsla(215 25% 15% / 0.4));
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 hsla(215 25% 15% / 0.05);
+    --shadow-md: 0 4px 6px -1px hsla(215 25% 15% / 0.1), 0 2px 4px -1px hsla(215 25% 15% / 0.06);
+    --shadow-lg: 0 10px 15px -3px hsla(215 25% 15% / 0.1), 0 4px 6px -2px hsla(215 25% 15% / 0.05);
+    --shadow-xl: 0 20px 25px -5px hsla(215 25% 15% / 0.1), 0 10px 10px -5px hsla(215 25% 15% / 0.04);
+    --shadow-hero: 0 25px 50px -12px hsla(214 84% 25% / 0.3);
+
+    /* Typography Scale */
+    --font-family-primary: 'Inter', system-ui, sans-serif;
+    --font-family-display: 'Playfair Display', serif;
+
+    /* Spacing & Layout */
+    --radius: 0.75rem;
+    --radius-sm: 0.5rem;
+    --radius-lg: 1rem;
+    --radius-xl: 1.5rem;
+
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-spring: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    --transition-bounce: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    /* Base Colors */
+    --background: 215 25% 8%;
+    --foreground: 0 0% 95%;
+
+    /* Card & Surface Colors */
+    --card: 215 25% 10%;
+    --card-foreground: 0 0% 95%;
+    --surface: 215 25% 12%;
+    --surface-foreground: 0 0% 90%;
+
+    /* Brand Colors - Dark Mode */
+    --primary: 214 84% 65%;
+    --primary-foreground: 215 25% 8%;
+    --primary-light: 214 84% 75%;
+    --primary-dark: 214 84% 55%;
+
+    /* Empathy & Hope Colors - Dark Mode */
+    --accent: 36 84% 65%;
+    --accent-foreground: 215 25% 8%;
+    --accent-light: 36 84% 75%;
+    --accent-dark: 36 84% 55%;
+
+    /* Secondary Colors */
+    --secondary: 215 25% 15%;
+    --secondary-foreground: 0 0% 90%;
+
+    /* Neutral Tones */
+    --muted: 215 25% 18%;
+    --muted-foreground: 215 15% 60%;
+    --subtle: 215 25% 14%;
+    --subtle-foreground: 215 15% 55%;
+
+    /* Status Colors */
+    --success: 142 76% 50%;
+    --success-foreground: 215 25% 8%;
+    --warning: 36 84% 65%;
+    --warning-foreground: 215 25% 8%;
+    --destructive: 0 84% 65%;
+    --destructive-foreground: 215 25% 8%;
+
+    /* Interactive Elements */
+    --border: 215 25% 20%;
+    --input: 215 25% 20%;
+    --ring: 214 84% 65%;
+
+    /* Gradients - Dark Mode */
+    --gradient-hero: linear-gradient(135deg, hsl(214 84% 55%), hsl(214 84% 45%));
+    --gradient-accent: linear-gradient(135deg, hsl(36 84% 65%), hsl(36 84% 55%));
+    --gradient-subtle: linear-gradient(180deg, hsl(215 25% 12%), hsl(215 25% 10%));
+    --gradient-overlay: linear-gradient(180deg, hsla(215 25% 8% / 0.9), hsla(215 25% 8% / 0.6));
+
+    /* Sidebar Colors */
+    --sidebar-background: 215 25% 6%;
+    --sidebar-foreground: 0 0% 90%;
+    --sidebar-primary: 214 84% 65%;
+    --sidebar-primary-foreground: 215 25% 8%;
+    --sidebar-accent: 215 25% 12%;
+    --sidebar-accent-foreground: 0 0% 85%;
+    --sidebar-border: 215 25% 15%;
+    --sidebar-ring: 214 84% 65%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-[var(--font-family-primary)];
+    line-height: 1.6;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-[var(--font-family-display)];
+    line-height: 1.2;
+  }
+}
+
+@layer components {
+  /* Custom Animation Classes */
+  .animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+  }
+
+  .animate-fade-in-left {
+    animation: fadeInLeft 0.8s ease-out forwards;
+  }
+
+  .animate-fade-in-right {
+    animation: fadeInRight 0.8s ease-out forwards;
+  }
+
+  .animate-scroll-x {
+    animation: scrollX 30s linear infinite;
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  /* Hero Background */
+  .hero-bg {
+    background: var(--gradient-hero);
+    position: relative;
+  }
+
+  .hero-bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--gradient-overlay);
+    z-index: 1;
+  }
+
+  /* Scroll Indicator */
+  .scroll-indicator {
+    position: relative;
+  }
+
+  .scroll-indicator::after {
+    content: '';
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 3rem;
+    background: hsl(var(--accent));
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+
+  /* Impact Cards Hover Effect */
+  .impact-card {
+    transition: var(--transition-spring);
+    transform: translateY(0);
+  }
+
+  .impact-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-xl);
+  }
+
+  /* Text Shimmer Effect */
+  .text-shimmer {
+    background: linear-gradient(
+      90deg,
+      hsl(var(--primary)) 0%,
+      hsl(var(--accent)) 50%,
+      hsl(var(--primary)) 100%
+    );
+    background-size: 200% auto;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 3s ease-in-out infinite;
+  }
+
+  /* Braille Dots Animation */
+  .braille-dots {
+    display: inline-flex;
+    gap: 0.125rem;
+  }
+
+  .braille-dot {
+    width: 0.375rem;
+    height: 0.375rem;
+    background: hsl(var(--accent));
+    border-radius: 50%;
+    animation: braillePulse 1.5s ease-in-out infinite;
+  }
+
+  .braille-dot:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  .braille-dot:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+
+  .braille-dot:nth-child(4) {
+    animation-delay: 0.6s;
+  }
+
+  .braille-dot:nth-child(5) {
+    animation-delay: 0.8s;
+  }
+
+  .braille-dot:nth-child(6) {
+    animation-delay: 1s;
+  }
+}
+
+@layer utilities {
+  .bg-gradient-hero {
+    background: var(--gradient-hero);
+  }
+
+  .bg-gradient-accent {
+    background: var(--gradient-accent);
+  }
+
+  .bg-gradient-subtle {
+    background: var(--gradient-subtle);
+  }
+
+  .shadow-hero {
+    box-shadow: var(--shadow-hero);
+  }
+
+  .transition-smooth {
+    transition: var(--transition-smooth);
+  }
+
+  .transition-spring {
+    transition: var(--transition-spring);
+  }
+
+  .transition-bounce {
+    transition: var(--transition-bounce);
+  }
+}
+
+/* Keyframe Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scrollX {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes scrollPulse {
+  0%, 100% {
+    opacity: 0.4;
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-10px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+@keyframes braillePulse {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
