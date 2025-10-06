@@ -26,16 +26,18 @@ public class NGOServices {
     private final EndUserRepo endUserRepo;
     private final ProgramRepo programRepo;
     private final ApplicationRepo applicationRepo;
+    private final PasswordEncoder passwordEncoder;
 
 
     @Autowired
-    public NGOServices(NGORepo ngoRepo,PasswordEncoder encoder,DonorRepo donorRepo,EndUserRepo endUserRepo,ProgramRepo programRepo, ApplicationRepo applicationRepo) {
+    public NGOServices(NGORepo ngoRepo,PasswordEncoder encoder,DonorRepo donorRepo,EndUserRepo endUserRepo,ProgramRepo programRepo, ApplicationRepo applicationRepo,PasswordEncoder passwordEncoder) {
         this.ngoRepo = ngoRepo;
         this.encoder=encoder;
         this.donorRepo=donorRepo;
         this.endUserRepo=endUserRepo;
         this.programRepo=programRepo;
         this.applicationRepo=applicationRepo;
+        this.passwordEncoder=passwordEncoder;
     }
 
     public ResponseDTO registerNgo(NGODto ngoDto){
@@ -74,7 +76,7 @@ public class NGOServices {
         }
 
         NGO ngo = ngoEmail.get();
-        if(!ngo.getPassword().equals(ngoDto.getPassword())){
+        if(!passwordEncoder.matches(ngoDto.getPassword(), ngo.getPassword())){
             return new ResponseDTO("Invalid Password");
         }
         return new ResponseDTO("Login Successful");
@@ -201,4 +203,18 @@ public class NGOServices {
         return applicationRepo.findAll();
     }
 
+    public Applications updateStatus(int applicationId, ApplicationStatus status) {
+        Applications application = applicationRepo.findById(applicationId)
+                .orElseThrow(() -> new RuntimeException("Application not found"));
+
+        application.setStatus(status);
+        return applicationRepo.save(application);
+    }
+
+
+
+
+
+
 }
+

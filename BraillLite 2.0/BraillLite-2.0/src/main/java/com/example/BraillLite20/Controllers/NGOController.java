@@ -2,10 +2,7 @@ package com.example.BraillLite20.Controllers;
 
 import com.example.BraillLite20.DTOs.RequestDTO.*;
 import com.example.BraillLite20.DTOs.ResponseDTO.ResponseDTO;
-import com.example.BraillLite20.Entity.Applications;
-import com.example.BraillLite20.Entity.Donor;
-import com.example.BraillLite20.Entity.EndUser;
-import com.example.BraillLite20.Entity.Programs;
+import com.example.BraillLite20.Entity.*;
 import com.example.BraillLite20.Service.JWTServices;
 import com.example.BraillLite20.Service.MyUserDetailService;
 import com.example.BraillLite20.Service.NGOServices;
@@ -149,6 +146,19 @@ public class NGOController {
             throw new IllegalArgumentException("Unauthorized");
         }
         return ngoServices.getAllApplications();
+    }
+
+    @PreAuthorize("hasRole('NGO')")
+    @PostMapping("/{id}/accept")
+    public ResponseEntity<String> acceptApplication(@PathVariable int id) {
+        ngoServices.updateStatus(id, ApplicationStatus.ACCEPTED);
+        return ResponseEntity.ok("Application accepted");
+    }
+
+    @PostMapping("/{id}/reject")
+    public ResponseEntity<String> rejectApplication(@PathVariable int id) {
+        ngoServices.updateStatus(id, ApplicationStatus.REJECTED);
+        return ResponseEntity.ok("Application rejected");
     }
 
 

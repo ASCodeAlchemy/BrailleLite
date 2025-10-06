@@ -1,9 +1,6 @@
 package com.example.BraillLite20.Service;
 
-import com.example.BraillLite20.DTOs.RequestDTO.ApplicationDTO;
-import com.example.BraillLite20.DTOs.RequestDTO.ChangePassDTO;
-import com.example.BraillLite20.DTOs.RequestDTO.UserDTO;
-import com.example.BraillLite20.DTOs.RequestDTO.UserProfileDTO;
+import com.example.BraillLite20.DTOs.RequestDTO.*;
 import com.example.BraillLite20.DTOs.ResponseDTO.ResponseDTO;
 import com.example.BraillLite20.Entity.Applications;
 import com.example.BraillLite20.Entity.Programs;
@@ -20,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -88,7 +86,6 @@ public class UserService {
         UserProfileDTO dto = new UserProfileDTO();
         Users user = findEmail.get();
 
-        // Fix: Set DTO fields from user, not the other way around
         dto.setName(user.getName());
         dto.setUsername(user.getUsername());
         dto.setEmail(user.getEmail());
@@ -182,6 +179,16 @@ public class UserService {
 
     public List<Programs> getPrograms(){
         return programRepo.findAll();
+    }
+
+    public List<UserApplicationResponseDTO> getApplicationsByEmail(String email) {
+        List<Applications> applications = applicationRepo.findByEmail(email);
+
+        return applications.stream().map(app -> new UserApplicationResponseDTO(
+                app.getProgram(),
+                app.getStatus(),
+                app.getSkills()
+        )).collect(Collectors.toList());
     }
 
 

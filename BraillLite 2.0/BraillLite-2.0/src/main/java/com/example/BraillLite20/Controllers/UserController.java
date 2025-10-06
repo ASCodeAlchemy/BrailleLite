@@ -1,13 +1,11 @@
 package com.example.BraillLite20.Controllers;
 
-import com.example.BraillLite20.DTOs.RequestDTO.ApplicationDTO;
-import com.example.BraillLite20.DTOs.RequestDTO.ChangePassDTO;
-import com.example.BraillLite20.DTOs.RequestDTO.UserDTO;
-import com.example.BraillLite20.DTOs.RequestDTO.UserProfileDTO;
+import com.example.BraillLite20.DTOs.RequestDTO.*;
 import com.example.BraillLite20.DTOs.ResponseDTO.ResponseDTO;
 import com.example.BraillLite20.Entity.Programs;
 import com.example.BraillLite20.Service.JWTServices;
 import com.example.BraillLite20.Service.MyUserDetailService;
+import com.example.BraillLite20.Service.NGOServices;
 import com.example.BraillLite20.Service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +28,7 @@ public class UserController {
 private final UserService userService;
     private final MyUserDetailService myUserDetailService;
     private final JWTServices jwtServices;
+
 
 
     @Autowired
@@ -133,6 +133,19 @@ private final UserService userService;
         }
 
         return userService.getPrograms();
+    }
+
+
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/users/myApplications")
+    public ResponseEntity<List<UserApplicationResponseDTO>> getUserApplications(
+            Authentication authentication) {
+
+        String userEmail = authentication.getName();
+
+        List<UserApplicationResponseDTO> applications = userService.getApplicationsByEmail(userEmail);
+
+        return ResponseEntity.ok(applications);
     }
 
 }

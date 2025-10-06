@@ -32,6 +32,14 @@ public class Applications {
     @JoinColumn(name = "programs_prog_id")
     private Programs programs;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private ApplicationStatus status = ApplicationStatus.PENDING;
+
+    @ManyToOne
+    @JoinColumn(name = "id")
+    private Users user;
+
 }
 
 
