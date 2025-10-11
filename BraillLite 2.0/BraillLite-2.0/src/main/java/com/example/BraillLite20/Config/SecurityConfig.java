@@ -42,7 +42,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request->request.requestMatchers("/api/users/register"
                         ,"/api/ngo/register"
                         ,"/api/users/login","/api/convert","/api/ngo/login","/api/donor/save","/api/payment/create-checkout-session/*",
-                        "/api/payment/success","/api/payment/cancel","/api/feedback").permitAll().anyRequest().authenticated())
+                        "/api/payment/success","/api/payment/cancel","/api/feedback","/api/ngo/total").permitAll().anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .authenticationProvider(authProvider())
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

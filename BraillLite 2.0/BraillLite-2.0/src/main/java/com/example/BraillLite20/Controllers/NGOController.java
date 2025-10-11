@@ -162,6 +162,12 @@ public class NGOController {
     }
 
 
+    @GetMapping("/total")
+    public ResponseEntity<Double> getSum(){
+        return new ResponseEntity<>(ngoServices.getTotal(),HttpStatus.OK);
+    }
+
+
 
 
  }

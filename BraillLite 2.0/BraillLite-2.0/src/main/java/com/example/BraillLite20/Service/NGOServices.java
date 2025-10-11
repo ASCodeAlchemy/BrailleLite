@@ -211,6 +211,10 @@ public class NGOServices {
         return applicationRepo.save(application);
     }
 
+    public Double getTotal(){
+      return donorRepo.getTotal().orElse(0.0);
+    }
+
 
 
 
